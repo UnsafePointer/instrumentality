@@ -28,7 +28,7 @@ module Instrumentality
       pid = ""
       Timeout.timeout(seconds) do
         loop do
-          pid = `ps aux | grep #{process} | grep -v grep | awk '{print $2}'`.delete("\n")
+          pid = `ps aux | grep #{process}.app | grep -v grep | awk '{print $2}'`.strip
           break if pid != ""
         end
       end

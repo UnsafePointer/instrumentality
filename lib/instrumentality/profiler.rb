@@ -1,5 +1,6 @@
 require 'instrumentality/executor'
 require 'instrumentality/finder'
+require 'instrumentality/constants'
 
 module Instrumentality
   class Profiler
@@ -12,12 +13,13 @@ module Instrumentality
 
     def profile
       current_directory = Dir.pwd
-      Dir.mktmpdir do |dir|
-        compile(current_directory, dir)
-        run_tests(dir)
+      Dir.mktmpdir do |tmpdir|
+        compile(current_directory, tmpdir)
+        run_tests(tmpdir)
         find_app_pid
-        attach_dtrace
+        attach_dtrace(tmpdir)
         wait
+        process_dtrace_output(current_directory, tmpdir)
       end
     end
 
@@ -52,11 +54,11 @@ module Instrumentality
       @app_pid = Executor.timeout(config.process)
     end
 
-    def attach_dtrace
+    def attach_dtrace(temporary_directory)
       dtrace_cmd = %w[sudo dtrace]
-      dtrace_cmd += %W[-q -s #{Finder.path_for_script("trace.d")}]
+      dtrace_cmd += %W[-q -s #{Finder.path_for_script(Constants::TRACE_SCRIPT)}]
       dtrace_cmd += %W[-p #{app_pid}]
-      dtrace_cmd += %w[> dtrace_output]
+      dtrace_cmd += %W[> #{temporary_directory}/#{Constants::DTRACE_OUTPUT}]
       cmd = dtrace_cmd.join(' ')
       @dtrace_pid = Executor.execute_async(cmd)
     end
@@ -64,6 +66,20 @@ module Instrumentality
     def wait
       Process.wait(xcodebuild_pid)
       Process.kill("QUIT", dtrace_pid)
+    end
+
+    def process_dtrace_output(current_directory, temporary_directory)
+      report = "timeStamp,elapsed,label,responseCode,success\n"
+      epoch = Time.now.to_i
+      File.readlines("#{temporary_directory}/#{Constants::DTRACE_OUTPUT}").each do |line|
+        to_parse = line.strip
+        next if to_parse.empty?
+        values = to_parse.split(Constants::TRACE_SCRIPT_DELIMITER)
+        view_controller = values[0]
+        elapsed = values[1]
+        report += "#{epoch},#{elapsed},#{view_controller},#{Constants::RESPONSE_CODE},#{Constants::SUCCESS}\n"
+      end
+      File.write("#{current_directory}/#{Constants::JTL_REPORT}", report)
     end
   end
 end

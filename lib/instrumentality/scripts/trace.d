@@ -10,5 +10,5 @@ performance$target:::controller_did_appear
 {
   controller = copyinstr(arg0);
   time = (timestamp - controller_init_times[controller]);
-  printf("%s:%d.\n", controller, time);
+  printf("%s:%d\n", controller, time);
 }

@@ -1,5 +1,7 @@
 require 'instrumentality/command'
 require 'instrumentality/finder'
+require 'instrumentality/profiler'
+require 'ostruct'
 
 module Instrumentality
   class Profile < Command
@@ -36,7 +38,12 @@ module Instrumentality
     end
 
     def run
-
+      config = OpenStruct.new({'process' => @process,
+                               'workspace' => @workspace,
+                               'project' => @project,
+                               'scheme' => @scheme})
+      profiler = Profiler.new(config, @verbose)
+      profiler.profile
     end
   end
 end

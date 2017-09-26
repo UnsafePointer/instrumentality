@@ -8,6 +8,14 @@ module Instrumentality
       find('*.xcodeproj', 1).first
     end
 
+    def self.find_xctestrun
+      find('*.xctestrun').first
+    end
+
+    def self.path_for_script(name)
+      File.expand_path("../scripts/#{name}", __FILE__)
+    end
+
     def self.find(name, depth = 0, location = '.')
       cmd = %W[find #{location} -name '#{name}']
       cmd += %W[-maxdepth #{depth}] if depth > 0

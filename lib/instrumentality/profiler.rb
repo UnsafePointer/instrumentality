@@ -79,8 +79,8 @@ module Instrumentality
         next if to_parse.empty?
         values = to_parse.split(Constants::TRACE_SCRIPT_DELIMITER)
         view_controller = values[0]
-        elapsed = values[1]
-        report += "#{epoch},#{elapsed},#{view_controller},#{Constants::RESPONSE_CODE},#{Constants::SUCCESS}\n"
+        elapsed = values[1].to_f / 1000000
+        report += "#{epoch},%.0f,#{view_controller},#{Constants::RESPONSE_CODE},#{Constants::SUCCESS}\n" % elapsed
       end
       File.write("#{current_directory}/#{Constants::JTL_REPORT}", report)
     end

@@ -8,5 +8,7 @@ module Instrumentality
     RESPONSE_CODE = "200".freeze
     SUCCESS = "true".freeze
     JTL_REPORT = "instr.jtl".freeze
+    DEFAULT_RUNTIME = "latest".freeze
+    DEFAULT_DEVICE = "iPhone 6".freeze
   end
 end

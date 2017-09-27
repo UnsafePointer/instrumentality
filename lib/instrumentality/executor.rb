@@ -7,7 +7,7 @@ module Instrumentality
   class Executor
     class ExecutorError < StandardError; include CLAide::InformativeError; end
 
-    def self.execute(cmd, verbose)
+    def self.execute(cmd, verbose = false)
       puts "#{Constants::OUTPUT_PREFIX} Executing command: #{cmd}"
       if verbose
         system(cmd)

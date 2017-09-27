@@ -1,6 +1,7 @@
 require 'instrumentality/executor'
 require 'instrumentality/finder'
 require 'instrumentality/constants'
+require 'instrumentality/simctl'
 
 module Instrumentality
   class Profiler
@@ -15,10 +16,12 @@ module Instrumentality
       current_directory = Dir.pwd
       Dir.mktmpdir do |tmpdir|
         compile(current_directory, tmpdir)
-        run_tests(tmpdir)
-        find_app_pid
-        attach_dtrace(tmpdir)
-        wait
+        Simctl.execute_with_simulator_ready(Constants::DEFAULT_RUNTIME, Constants::DEFAULT_DEVICE) do |device|
+          run_tests(tmpdir, device)
+          find_app_pid
+          attach_dtrace(tmpdir)
+          wait
+        end
         process_dtrace_output(current_directory, tmpdir)
       end
     end
@@ -40,11 +43,11 @@ module Instrumentality
       Executor.execute(cmd, verbose)
     end
 
-    def run_tests(temporary_directory)
+    def run_tests(temporary_directory, device)
       xctestrun = Finder.find_xctestrun
       xcodebuild_cmd = %w[xcodebuild]
-      xcodebuild_cmd += %W[-xctestrun #{xctestrun}]
-      xcodebuild_cmd += %w[-destination 'platform=iOS Simulator,name=iPhone 6,OS=10.3.1']
+      xcodebuild_cmd += %W[-xctestrun #{temporary_directory}/#{xctestrun}]
+      xcodebuild_cmd += %W[-destination 'platform=iOS Simulator,id=#{device.udid}']
       xcodebuild_cmd += %w[test-without-building]
       cmd = xcodebuild_cmd.join(' ')
       @xcodebuild_pid = Executor.execute_async(cmd)

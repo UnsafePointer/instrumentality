@@ -4,7 +4,7 @@ require 'instrumentality/constants'
 require 'instrumentality/simctl'
 
 module Instrumentality
-  class Profiler
+  class Benchmarker
     attr_reader :config, :verbose, :xcodebuild_pid, :app_pid, :dtrace_pid
 
     def initialize(config, verbose)
@@ -59,7 +59,7 @@ module Instrumentality
 
     def attach_dtrace(temporary_directory)
       dtrace_cmd = %w[sudo dtrace]
-      dtrace_cmd += %W[-q -s #{Finder.path_for_script(Constants::TRACE_SCRIPT)}]
+      dtrace_cmd += %W[-q -s #{Finder.path_for_script(Constants::BENCHMARK_SCRIPT)}]
       dtrace_cmd += %W[-p #{app_pid}]
       dtrace_cmd += %W[> #{temporary_directory}/#{Constants::DTRACE_OUTPUT}]
       cmd = dtrace_cmd.join(' ')

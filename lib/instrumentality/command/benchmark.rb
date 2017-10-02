@@ -1,10 +1,10 @@
 require 'instrumentality/command'
 require 'instrumentality/finder'
-require 'instrumentality/profiler'
+require 'instrumentality/benchmarker'
 require 'ostruct'
 
 module Instrumentality
-  class Profile < Command
+  class Benchmark < Command
     def self.options
       [
         ['--workspace=path/to/name.xcworkspace', 'If not set, Scania will try to find one'],
@@ -18,7 +18,7 @@ module Instrumentality
     ]
 
     self.summary = <<-DESC
-      Attach a profiler to a specific iOS process
+      Run a benchmark to a specific iOS process. Requires static probes.
     DESC
 
     def initialize(argv)
@@ -42,7 +42,7 @@ module Instrumentality
                                'workspace' => @workspace,
                                'project' => @project,
                                'scheme' => @scheme})
-      profiler = Profiler.new(config, @verbose)
+      profiler = Benchmarker.new(config, @verbose)
       profiler.profile
     end
   end

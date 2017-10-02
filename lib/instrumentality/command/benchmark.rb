@@ -18,7 +18,7 @@ module Instrumentality
     ]
 
     self.summary = <<-DESC
-      Run a benchmark to a specific iOS process. Requires static probes.
+      Runs a benchmark against a specific iOS process. Requires static probes.
     DESC
 
     def initialize(argv)

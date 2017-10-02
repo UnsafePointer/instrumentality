@@ -16,6 +16,10 @@ module Instrumentality
       File.expand_path("../scripts/#{name}", __FILE__)
     end
 
+    def self.path_for_header(name)
+      File.expand_path("../headers/#{name}", __FILE__)
+    end
+
     def self.find(name, depth = 0, location = '.')
       cmd = %W[find #{location} -name '#{name}']
       cmd += %W[-maxdepth #{depth}] if depth > 0

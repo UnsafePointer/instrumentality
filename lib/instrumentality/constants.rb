@@ -10,5 +10,6 @@ module Instrumentality
     JTL_REPORT = "instr.jtl".freeze
     DEFAULT_RUNTIME = "latest".freeze
     DEFAULT_DEVICE = "iPhone 6".freeze
+    DEFAULT_SERVER_PORT = 8080
   end
 end

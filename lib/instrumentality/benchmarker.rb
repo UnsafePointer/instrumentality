@@ -2,6 +2,8 @@ require 'instrumentality/executor'
 require 'instrumentality/finder'
 require 'instrumentality/constants'
 require 'instrumentality/simctl'
+require 'net/http'
+require 'uri'
 
 module Instrumentality
   class Benchmarker
@@ -19,6 +21,7 @@ module Instrumentality
         Simctl.execute_with_simulator_ready(Constants::DEFAULT_RUNTIME, Constants::DEFAULT_DEVICE) do |device|
           run_tests(tmpdir, device)
           find_app_pid
+          notify_server
           attach_dtrace(tmpdir)
           wait
         end
@@ -55,6 +58,14 @@ module Instrumentality
 
     def find_app_pid
       @app_pid = Executor.timeout(config.process)
+    end
+
+    def notify_server
+      uri = URI.parse("http://localhost:#{config.server_port}/")
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.request(Net::HTTP::Get.new(uri.request_uri))
+    rescue
+      retry
     end
 
     def attach_dtrace(temporary_directory)

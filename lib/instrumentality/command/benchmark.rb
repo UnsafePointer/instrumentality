@@ -1,15 +1,17 @@
 require 'instrumentality/command'
 require 'instrumentality/finder'
 require 'instrumentality/benchmarker'
+require 'instrumentality/constants'
 require 'ostruct'
 
 module Instrumentality
   class Benchmark < Command
     def self.options
       [
-        ['--workspace=path/to/name.xcworkspace', 'If not set, Scania will try to find one'],
-        ['--project=path/to/name.xcodeproj', 'If not set and workspace search failed, Scania will try to find one'],
-        ['--scheme=name', 'If not set, Scania will use the process name'],
+        ['--workspace=path/to/name.xcworkspace', 'If not set, Instr will try to find one'],
+        ['--project=path/to/name.xcodeproj', 'If not set and workspace search failed, Instr will try to find one'],
+        ['--scheme=name', 'If not set, Instr will use the process name'],
+        ['--server-port=port_number', 'If not set, Instr will use 8080'],
       ].concat(super)
     end
 
@@ -27,6 +29,7 @@ module Instrumentality
       @project = argv.option('project')
       @project ||= Finder.find_project if @workspace.nil?
       @scheme = argv.option('scheme') || @process
+      @server_port = argv.option('server-port') || Constants::DEFAULT_SERVER_PORT
       super
     end
 
@@ -41,7 +44,8 @@ module Instrumentality
       config = OpenStruct.new({'process' => @process,
                                'workspace' => @workspace,
                                'project' => @project,
-                               'scheme' => @scheme})
+                               'scheme' => @scheme,
+                               'server_port' => @server_port})
       profiler = Benchmarker.new(config, @verbose)
       profiler.profile
     end

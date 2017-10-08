@@ -12,6 +12,7 @@ module Instrumentality
         ['--project=path/to/name.xcodeproj', 'If not set and workspace search failed, Instr will try to find one'],
         ['--scheme=name', 'If not set, Instr will use the process name'],
         ['--server-port=port_number', 'If not set, Instr will use 8080'],
+        ['--interactive', 'If set, Instr will not attempt to run an Xcode scheme, but instead attach DTrace directly'],
       ].concat(super)
     end
 
@@ -30,6 +31,7 @@ module Instrumentality
       @project ||= Finder.find_project if @workspace.nil?
       @scheme = argv.option('scheme') || @process
       @server_port = argv.option('server-port') || Constants::DEFAULT_SERVER_PORT
+      @interactive = argv.flag?('interactive', false)
       super
     end
 
@@ -37,6 +39,7 @@ module Instrumentality
       super
 
       help! 'A process name is required' unless @process
+      return if @interactive
       help! 'Xcode workspace or project files not found' if @workspace.nil? && @project.nil?
     end
 
@@ -45,7 +48,8 @@ module Instrumentality
                                'workspace' => @workspace,
                                'project' => @project,
                                'scheme' => @scheme,
-                               'server_port' => @server_port})
+                               'server_port' => @server_port,
+                               'interactive' => @interactive})
       profiler = Benchmarker.new(config, @verbose)
       profiler.profile
     end

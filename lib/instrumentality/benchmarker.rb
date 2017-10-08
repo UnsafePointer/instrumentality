@@ -7,6 +7,7 @@ require 'uri'
 
 module Instrumentality
   class Benchmarker
+    class BenchmarkerInterrupt < StandardError; include CLAide::InformativeError; end
     attr_reader :config, :verbose, :xcodebuild_pid, :app_pid, :dtrace_pid
 
     def initialize(config, verbose)
@@ -15,6 +16,7 @@ module Instrumentality
     end
 
     def profile
+      return interactive if @config.interactive
       current_directory = Dir.pwd
       Dir.mktmpdir do |tmpdir|
         compile(current_directory, tmpdir)
@@ -30,6 +32,12 @@ module Instrumentality
     end
 
     private
+
+    def interactive()
+      find_app_pid
+      attach_dtrace('.')
+      stream_dtrace_output
+    end
 
     def compile(current_directory, temporary_directory)
       xcodebuild_cmd = %w[xcodebuild]
@@ -94,6 +102,24 @@ module Instrumentality
         report += "#{epoch},%.0f,#{view_controller},#{Constants::RESPONSE_CODE},#{Constants::SUCCESS}\n" % elapsed
       end
       File.write("#{current_directory}/#{Constants::JTL_REPORT}", report)
+    end
+
+    def stream_dtrace_output
+      output_file = Constants::DTRACE_OUTPUT
+      FileUtils.rm_rf(output_file) if File.exist? output_file
+      touch_cmd = %W[touch "#{output_file}"]
+      cmd = touch_cmd.join(' ')
+      Executor.execute(cmd, verbose)
+      stream = IO.new(IO.sysopen(output_file))
+      puts "#{Constants::OUTPUT_PREFIX} Started interactive session. #{"Press CTRL+C to finish.".blue}"
+      begin
+        loop do
+          output = stream.gets
+          puts output unless output.nil?
+        end
+      rescue SignalException => e
+        raise BenchmarkerInterrupt, "Interactive session ended. Full output at ./#{output_file}".green
+      end
     end
   end
 end

@@ -12,5 +12,6 @@ module Instrumentality
     DEFAULT_RUNTIME = "latest".freeze
     DEFAULT_DEVICE = "iPhone 6".freeze
     DEFAULT_SERVER_PORT = 8080
+    EXPERIMENTAL = "experimental_".freeze
   end
 end

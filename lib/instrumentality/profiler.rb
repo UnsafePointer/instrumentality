@@ -8,11 +8,16 @@ require 'uri'
 module Instrumentality
   class Profiler
     class ProfilerInterruptError < StandardError; include CLAide::InformativeError; end
-    attr_reader :config, :verbose, :xcodebuild_pid, :app_pid, :dtrace_pid
+    class ProfilerError < StandardError; include CLAide::InformativeError; end
+    attr_reader :config, :script_path, :verbose, :xcodebuild_pid, :app_pid, :dtrace_pid
 
     def initialize(config, verbose)
       @config = config
       @verbose = verbose
+      script = config.script.dup
+      script.prepend(Constants::EXPERIMENTAL) if @config.experimental
+      @script_path = Finder.path_for_script(script)
+      raise ProfilerError, "This intrument doesn't support --experimental flag".red unless File.exist?(script_path)
     end
 
     def profile
@@ -78,7 +83,7 @@ module Instrumentality
 
     def attach_dtrace(temporary_directory)
       dtrace_cmd = %w[sudo dtrace]
-      dtrace_cmd += %W[-q -s #{Finder.path_for_script(config.script)}]
+      dtrace_cmd += %W[-q -s #{script_path}]
       dtrace_cmd += %W[-p #{app_pid}]
       dtrace_cmd += %W[> #{temporary_directory}/#{Constants::DTRACE_OUTPUT}]
       cmd = dtrace_cmd.join(' ')

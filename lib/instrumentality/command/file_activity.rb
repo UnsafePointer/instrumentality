@@ -13,6 +13,7 @@ module Instrumentality
         ['--scheme=name', 'If not set, Instr will use the process name'],
         ['--server-port=port_number', 'If not set, Instr will use 8080'],
         ['--interactive', 'If set, Instr will not attempt to run an Xcode scheme, but instead attach DTrace directly'],
+        ['--experimental', "Don't use it if you don't know what it does"],
       ].concat(super)
     end
 
@@ -32,6 +33,7 @@ module Instrumentality
       @scheme = argv.option('scheme') || @process
       @server_port = argv.option('server-port') || Constants::DEFAULT_SERVER_PORT
       @interactive = argv.flag?('interactive', false)
+      @experimental = argv.flag?('experimental', false)
       super
     end
 
@@ -50,7 +52,8 @@ module Instrumentality
                                'project' => @project,
                                'scheme' => @scheme,
                                'server_port' => @server_port,
-                               'interactive' => @interactive})
+                               'interactive' => @interactive,
+                               'experimental' => @experimental})
       profiler = Profiler.new(config, @verbose)
       profiler.profile
     end

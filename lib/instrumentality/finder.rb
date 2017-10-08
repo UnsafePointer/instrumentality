@@ -8,8 +8,8 @@ module Instrumentality
       find('*.xcodeproj', 1).first
     end
 
-    def self.find_xctestrun
-      find('*.xctestrun').first
+    def self.find_xctestrun(location)
+      find('*.xctestrun', 0, location).first
     end
 
     def self.path_for_script(name)

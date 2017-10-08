@@ -47,9 +47,9 @@ module Instrumentality
     end
 
     def run_tests(temporary_directory, device)
-      xctestrun = Finder.find_xctestrun
+      xctestrun = Finder.find_xctestrun(temporary_directory)
       xcodebuild_cmd = %w[xcodebuild]
-      xcodebuild_cmd += %W[-xctestrun #{temporary_directory}/#{xctestrun}]
+      xcodebuild_cmd += %W[-xctestrun #{xctestrun}]
       xcodebuild_cmd += %W[-destination 'platform=iOS Simulator,id=#{device.udid}']
       xcodebuild_cmd += %w[test-without-building]
       cmd = xcodebuild_cmd.join(' ')

@@ -6,8 +6,8 @@ require 'net/http'
 require 'uri'
 
 module Instrumentality
-  class Benchmarker
-    class BenchmarkerInterrupt < StandardError; include CLAide::InformativeError; end
+  class Profiler
+    class ProfilerInterruptError < StandardError; include CLAide::InformativeError; end
     attr_reader :config, :verbose, :xcodebuild_pid, :app_pid, :dtrace_pid
 
     def initialize(config, verbose)
@@ -78,7 +78,7 @@ module Instrumentality
 
     def attach_dtrace(temporary_directory)
       dtrace_cmd = %w[sudo dtrace]
-      dtrace_cmd += %W[-q -s #{Finder.path_for_script(Constants::BENCHMARK_SCRIPT)}]
+      dtrace_cmd += %W[-q -s #{Finder.path_for_script(config.script)}]
       dtrace_cmd += %W[-p #{app_pid}]
       dtrace_cmd += %W[> #{temporary_directory}/#{Constants::DTRACE_OUTPUT}]
       cmd = dtrace_cmd.join(' ')
@@ -118,7 +118,7 @@ module Instrumentality
           puts output unless output.nil?
         end
       rescue SignalException => e
-        raise BenchmarkerInterrupt, "Interactive session ended. Full output at ./#{output_file}".green
+        raise ProfilerInterruptError, "Interactive session ended. Full output at ./#{output_file}".green
       end
     end
   end

@@ -5,7 +5,7 @@ require 'instrumentality/constants'
 require 'ostruct'
 
 module Instrumentality
-  class Benchmark < Command
+  class FileActivity < Command
     def self.options
       [
         ['--workspace=path/to/name.xcworkspace', 'If not set, Instr will try to find one'],
@@ -21,7 +21,7 @@ module Instrumentality
     ]
 
     self.summary = <<-DESC
-      Runs a benchmark against a specific iOS process. Requires static probes.
+      Prints files opened by a specific iOS process.
     DESC
 
     def initialize(argv)
@@ -44,7 +44,7 @@ module Instrumentality
     end
 
     def run
-      config = OpenStruct.new({'script' => Constants::BENCHMARK_SCRIPT,
+      config = OpenStruct.new({'script' => Constants::FILE_ACTIVITY_SCRIPT,
                                'process' => @process,
                                'workspace' => @workspace,
                                'project' => @project,

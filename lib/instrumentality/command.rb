@@ -4,6 +4,7 @@ require 'instrumentality/version'
 module Instrumentality
   class Command < CLAide::Command
     require 'instrumentality/command/benchmark'
+    require 'instrumentality/command/file_activity'
     require 'instrumentality/command/generate_header'
 
     self.abstract_command = true

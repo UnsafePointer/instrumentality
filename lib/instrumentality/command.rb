@@ -6,6 +6,7 @@ module Instrumentality
     require 'instrumentality/command/benchmark'
     require 'instrumentality/command/file_activity'
     require 'instrumentality/command/generate_header'
+    require 'instrumentality/command/custom'
 
     self.abstract_command = true
     self.command = 'instr'

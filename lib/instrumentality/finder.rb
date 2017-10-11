@@ -13,6 +13,7 @@ module Instrumentality
     end
 
     def self.path_for_script(name)
+      return name if File.exist?(name)
       File.expand_path("../scripts/#{name}", __FILE__)
     end
 

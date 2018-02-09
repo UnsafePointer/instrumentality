@@ -1,4 +1,4 @@
-require "spec_helper"
+require 'spec_helper'
 
 describe Instrumentality::Profile do
   context 'initialized without a target process name' do
@@ -59,7 +59,7 @@ describe Instrumentality::Profile do
       end
     end
 
-    it "should raise an error when can't find workspace or project files" do
+    it "should not raise an error" do
       expect do
         @subject.validate_shared_arguments!
       end.not_to raise_error
@@ -77,7 +77,7 @@ describe Instrumentality::Profile do
       end
     end
 
-    it "s hould raise an error when can't find workspace or project files" do
+    it "should not raise an error" do
       expect do
         @subject.validate_shared_arguments!
       end.not_to raise_error

@@ -4,6 +4,7 @@ require 'instrumentality/constants'
 require 'instrumentality/simctl'
 require 'net/http'
 require 'uri'
+require 'tmpdir'
 
 module Instrumentality
   class Profiler

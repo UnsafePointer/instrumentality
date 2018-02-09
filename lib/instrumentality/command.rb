@@ -3,10 +3,11 @@ require 'instrumentality/version'
 
 module Instrumentality
   class Command < CLAide::Command
-    require 'instrumentality/command/benchmark'
-    require 'instrumentality/command/file_activity'
+    require 'instrumentality/command/profile'
+    require 'instrumentality/command/profile/benchmark'
+    require 'instrumentality/command/profile/file_activity'
+    require 'instrumentality/command/profile/custom'
     require 'instrumentality/command/generate_header'
-    require 'instrumentality/command/custom'
 
     self.abstract_command = true
     self.command = 'instr'

@@ -42,9 +42,9 @@ describe Instrumentality::Profiler do
       let(:build_for_testing_cmd) { "xcodebuild -workspace #{Dir.pwd}/#{workspace} -scheme #{scheme} -sdk iphonesimulator" }
       let(:default_runtime) { Instrumentality::Constants::DEFAULT_RUNTIME }
       let(:default_device_type) { Instrumentality::Constants::DEFAULT_DEVICE }
-      let(:device_uuid) { 'ABCDE' }
+      let(:device_udid) { 'ABCDE' }
       let(:test_without_building_cmd) { "xcodebuild -xctestrun" }
-      let(:test_destination) { "-destination 'platform=iOS Simulator,id=#{device_uuid}'" }
+      let(:test_destination) { "-destination 'platform=iOS Simulator,id=#{device_udid}'" }
       let(:xcodebuild_pid) { '2' }
       let(:dtrace_pid) { '3' }
       let(:server_port) { 9091 }
@@ -71,7 +71,7 @@ describe Instrumentality::Profiler do
         expect(Instrumentality::Simctl).to receive(:execute_with_simulator_ready).exactly(1) do |runtime, device_type|
           expect(runtime).to eql(default_runtime)
           expect(device_type).to eql(default_device_type)
-        end.and_yield(device_uuid)
+        end.and_yield(device_udid)
         expect(Instrumentality::Executor).to receive(:execute_async).exactly(1) do |cmd|
           expect(cmd).to start_with(test_without_building_cmd)
           expect(cmd).to include(test_destination)

@@ -27,8 +27,8 @@ module Instrumentality
       current_directory = Dir.pwd
       Dir.mktmpdir do |tmpdir|
         compile(current_directory, tmpdir)
-        Simctl.execute_with_simulator_ready(Constants::DEFAULT_RUNTIME, Constants::DEFAULT_DEVICE) do |device_uuid|
-          run_tests(tmpdir, device_uuid)
+        Simctl.execute_with_simulator_ready(Constants::DEFAULT_RUNTIME, Constants::DEFAULT_DEVICE) do |device_udid|
+          run_tests(tmpdir, device_udid)
           find_app_pid
           notify_server
           attach_dtrace(tmpdir)
@@ -61,11 +61,11 @@ module Instrumentality
       Executor.execute(cmd, verbose)
     end
 
-    def run_tests(temporary_directory, device_uuid)
+    def run_tests(temporary_directory, device_udid)
       xctestrun = Finder.find_xctestrun(temporary_directory)
       xcodebuild_cmd = %w[xcodebuild]
       xcodebuild_cmd += %W[-xctestrun #{xctestrun}]
-      xcodebuild_cmd += %W[-destination 'platform=iOS Simulator,id=#{device_uuid}']
+      xcodebuild_cmd += %W[-destination 'platform=iOS Simulator,id=#{device_udid}']
       xcodebuild_cmd += %w[test-without-building]
       cmd = xcodebuild_cmd.join(' ')
       @xcodebuild_pid = Executor.execute_async(cmd)

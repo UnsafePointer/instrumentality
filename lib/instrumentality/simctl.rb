@@ -10,11 +10,11 @@ module Instrumentality
         d.state == :booted && d.ready?
       end
       begin
-        yield device
+        yield device.udid
       rescue StandardError => error
         throw error
       ensure
-        delete_device(device.uuid)
+        delete_device(device)
       end
     end
 

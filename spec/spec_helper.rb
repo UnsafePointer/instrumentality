@@ -2,7 +2,9 @@ if ENV["COVERAGE"]
   require 'simplecov'
   require 'coveralls'
   SimpleCov.formatter = Coveralls::SimpleCov::Formatter
-  SimpleCov.start
+  SimpleCov.start do
+    add_filter 'spec'
+  end
 end
 
 require "bundler/setup"

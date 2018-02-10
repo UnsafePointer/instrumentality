@@ -3,6 +3,8 @@ jobs:
   build:
     docker:
       - image: ruenzuo/instrumentality-circle-ci:latest
+    environment:
+      - COVERAGE: "YES"
     steps:
       - checkout
       - run: gem install bundler

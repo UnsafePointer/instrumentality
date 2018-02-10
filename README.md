@@ -1,5 +1,8 @@
 # Instrumentality
 
+[![CircleCI](https://circleci.com/gh/Ruenzuo/instrumentality.svg?style=svg&circle-token=71523995bd17c73c1ce365df507d24cb0bc1e3c4)](https://circleci.com/gh/Ruenzuo/instrumentality)
+[![Coverage Status](https://coveralls.io/repos/github/Ruenzuo/instrumentality/badge.svg?branch=add_coveralls)](https://coveralls.io/github/Ruenzuo/instrumentality?branch=add_coveralls)
+
 Command line interface to profiling tools for iOS development
 
 ## Installation

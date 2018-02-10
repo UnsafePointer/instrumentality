@@ -1,0 +1,10 @@
+version: 2.0
+jobs:
+  build:
+    docker:
+      - image: ruenzuo/instrumentality-circle-ci:latest
+    steps:
+      - checkout
+      - run: gem install bundler
+      - run: bundle
+      - run: (/usr/local/bin/Finder.app &) && bundle exec rake spec

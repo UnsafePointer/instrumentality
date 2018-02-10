@@ -14,7 +14,7 @@ module Instrumentality
       rescue StandardError => error
         throw error
       ensure
-        delete_device(device)
+        delete_device(device.uuid)
       end
     end
 

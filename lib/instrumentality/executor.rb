@@ -1,4 +1,4 @@
-require 'instrumentality/constants'
+require 'instrumentality/logger'
 require 'claide'
 require 'colorize'
 require 'timeout'
@@ -8,7 +8,7 @@ module Instrumentality
     class ExecutorError < StandardError; include CLAide::InformativeError; end
 
     def self.execute(cmd, verbose = false)
-      puts "#{Constants::OUTPUT_PREFIX} Executing command: #{cmd}"
+      Logger.log("Executing command: #{cmd}")
       if verbose
         system(cmd)
       else
@@ -19,21 +19,25 @@ module Instrumentality
     end
 
     def self.execute_async(cmd)
-      spawn("#{cmd}").tap do |pid|
-        puts "#{Constants::OUTPUT_PREFIX} Spawned process (PID: #{pid}) from command: #{cmd}"
+      Process.spawn("#{cmd}").tap do |pid|
+        Logger.log("Spawned process (PID: #{pid}) from command: #{cmd}")
       end
     end
 
     def self.timeout(process, seconds = Constants::TIMEOUT)
       pid = ""
-      Timeout.timeout(seconds) do
-        loop do
-          pid = `ps aux | grep #{process}.app | grep -v grep | awk '{print $2}'`.strip
-          break if pid != ""
+      begin
+        Timeout.timeout(seconds) do
+          loop do
+            pid = `ps aux | grep #{process}.app | grep -v grep | awk '{print $2}'`.strip
+            break if pid != ""
+          end
         end
+      rescue Timeout::Error
+        raise ExecutorError, "Timeout while trying to find #{process} process".red
       end
       pid.tap do |pid|
-        puts "#{Constants::OUTPUT_PREFIX} Found process #{process} with PID: #{pid}"
+        Logger.log("Found process #{process} with PID: #{pid}")
       end
     end
   end

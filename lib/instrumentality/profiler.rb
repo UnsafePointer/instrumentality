@@ -2,6 +2,7 @@ require 'instrumentality/executor'
 require 'instrumentality/finder'
 require 'instrumentality/constants'
 require 'instrumentality/simctl'
+require 'instrumentality/logger'
 require 'net/http'
 require 'uri'
 require 'tmpdir'
@@ -117,7 +118,7 @@ module Instrumentality
       cmd = touch_cmd.join(' ')
       Executor.execute(cmd, verbose)
       stream = IO.new(IO.sysopen(output_file))
-      puts "#{Constants::OUTPUT_PREFIX} Started interactive session. #{"Press CTRL+C to finish.".blue}"
+      Logger.log("Started interactive session. #{"Press CTRL+C to finish.".blue}")
       begin
         loop do
           output = stream.gets

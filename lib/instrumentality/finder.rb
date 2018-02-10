@@ -1,11 +1,11 @@
 module Instrumentality
   class Finder
     def self.find_workspace
-      find('*.xcworkspace', 1).first
+      find('*.xcworkspace', 2).first
     end
 
     def self.find_project
-      find('*.xcodeproj', 1).first
+      find('*.xcodeproj', 2).first
     end
 
     def self.find_xctestrun(location)
